@@ -8,10 +8,11 @@ fun List<ProductDto>.toDomainList(): List<Product> = map { it.toDomain() }
 private fun ProductDto.toDomain(): Product {
     return Product(
         id = this.id,
-        name = this.name,
-        category = this.category,
-        region = this.region,
-        description = this.description,
-        price = this.price
+        name = this.nombre,
+        category = this.categoriaNombre,
+        region = this.regionNombre,
+        description = this.descripcion,
+        price = this.precio,
+        imageUrl = this.imagenUrl
     )
 }

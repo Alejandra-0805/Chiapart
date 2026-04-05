@@ -13,3 +13,6 @@ object Home
 
 @Serializable
 data class ProductDetails(val productId: Int)
+
+@Serializable
+object AddProduct

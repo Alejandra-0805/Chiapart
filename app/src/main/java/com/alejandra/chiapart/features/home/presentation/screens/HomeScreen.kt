@@ -146,6 +146,7 @@ fun HomeScreenPreview() {
                     category = "Categoria",
                     region = "Region 1",
                     description = "Esta es una descripcion de ejemplo para el producto.",
+                    imageUrl = "https://via.placeholder.com/150",
                     price = 99.99
                 )
             ),

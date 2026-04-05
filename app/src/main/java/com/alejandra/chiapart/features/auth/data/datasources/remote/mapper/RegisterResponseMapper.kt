@@ -5,8 +5,6 @@ import com.alejandra.chiapart.features.auth.domain.entities.RegisterResponse
 
 fun RegisterResponseDto.registerToDomain(): RegisterResponse {
     return RegisterResponse(
-        id = this.id,
-        email = this.email,
         message = this.message
     )
 }
