@@ -1,6 +1,7 @@
 package com.alejandra.chiapart.features.home.presentation.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,14 +39,16 @@ import com.alejandra.chiapart.features.home.presentation.viewmodels.HomeViewMode
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    onProductClick: (Int) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreenContent(
         uiState = uiState,
         onSearchQueryChange = viewModel::onSearchQueryChange,
-        onRetry = viewModel::onRetry
+        onRetry = viewModel::onRetry,
+        onProductClick = onProductClick
     )
 }
 
@@ -53,7 +56,8 @@ fun HomeScreen(
 private fun HomeScreenContent(
     uiState: HomeUiState,
     onSearchQueryChange: (String) -> Unit,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onProductClick: (Int) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -124,7 +128,10 @@ private fun HomeScreenContent(
                             items = uiState.products,
                             key = { item -> item.id }
                         ) { product ->
-                            ProductCard(product = product)
+                            ProductCard(
+                                product = product,
+                                onClick = { onProductClick(product.id) }
+                            )
                         }
                     }
                 }
@@ -150,8 +157,12 @@ private fun HeaderSection() {
 }
 
 @Composable
-private fun ProductCard(product: ProductUiModel) {
+private fun ProductCard(
+    product: ProductUiModel,
+    onClick: () -> Unit
+) {
     Card(
+        modifier = Modifier.clickable(onClick = onClick),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -242,6 +253,7 @@ fun HomeScreenPreview() {
             )
         ),
         onSearchQueryChange = {},
-        onRetry = {}
+        onRetry = {},
+        onProductClick = {}
     )
 }

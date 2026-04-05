@@ -2,6 +2,7 @@ package com.alejandra.chiapart.core.di
 
 import com.alejandra.chiapart.core.navigation.FeatureNavGraph
 import com.alejandra.chiapart.features.home.navigation.HomeNavGraph
+import com.alejandra.chiapart.features.productDetails.navigation.ProductDetailsNavGraph
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,4 +16,7 @@ abstract class NavigationModule {
     @IntoSet
     abstract fun bindHomeNavGraph(impl: HomeNavGraph): FeatureNavGraph
 
+    @Binds
+    @IntoSet
+    abstract fun bindProductDetailsNavGraph(impl: ProductDetailsNavGraph): FeatureNavGraph
 }
