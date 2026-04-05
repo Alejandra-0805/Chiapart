@@ -1,4 +1,4 @@
-package com.alejandra.amordepelis.core.navigation
+package com.alejandra.chiapart.core.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController

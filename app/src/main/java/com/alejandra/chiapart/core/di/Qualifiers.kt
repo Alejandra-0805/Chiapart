@@ -1,7 +1,7 @@
-package com.alejandra.amordepelis.core.di
+package com.alejandra.chiapart.core.di
 
 import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class AmorDePelisApi
+annotation class ChiapartApi

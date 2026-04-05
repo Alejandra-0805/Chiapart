@@ -1,4 +1,4 @@
-package com.alejandra.amordepelis.core.storage
+package com.alejandra.chiapart.core.storage
 
 import android.content.Context
 import androidx.datastore.core.DataStore

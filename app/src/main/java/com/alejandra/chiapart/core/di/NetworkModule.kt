@@ -1,9 +1,7 @@
-package com.alejandra.amordepelis.core.di
+package com.alejandra.chiapart.core.di
 
-import com.alejandra.amordepelis.features.auth.data.datasources.remote.api.AuthApi
-import com.alejandra.amordepelis.features.lists.data.datasources.remote.api.ListsApi
-import com.alejandra.amordepelis.features.movies.data.datasources.remote.api.MoviesApi
-import com.alejandra.amordepelis.features.user.data.datasources.remote.api.UserApi
+import com.alejandra.chiapart.features.home.data.datasources.remote.api.HomeApi
+import com.alejandra.chiapart.features.home.presentation.screens.HomeScreen
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -42,18 +40,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideMoviesApi(retrofit: Retrofit): MoviesApi = retrofit.create(MoviesApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideListsApi(retrofit: Retrofit): ListsApi = retrofit.create(ListsApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideUserApi(retrofit: Retrofit): UserApi = retrofit.create(UserApi::class.java)
-
+    fun provideAuthApi(retrofit: Retrofit): HomeApi{
+        return retrofit.create(HomeApi::class.java)
+    }
 }

@@ -1,6 +1,6 @@
-package com.alejandra.amordepelis.core.network.inteceptor
+package com.alejandra.chiapart.core.network.inteceptor
 
-import com.alejandra.amordepelis.core.storage.TokenProvider
+import com.alejandra.chiapart.core.storage.TokenProvider
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

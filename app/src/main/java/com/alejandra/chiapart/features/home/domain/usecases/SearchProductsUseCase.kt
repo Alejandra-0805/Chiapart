@@ -4,11 +4,10 @@ import com.alejandra.chiapart.features.home.domain.entities.Product
 import com.alejandra.chiapart.features.home.domain.repositories.ProductRepository
 import javax.inject.Inject
 
-class GetProductsUseCase @Inject constructor(
+class SearchProductsUseCase @Inject constructor(
     private val repository: ProductRepository
 ) {
-    suspend operator fun invoke(): List<Product> {
-        return repository.getProducts()
+    suspend operator fun invoke(query: String): List<Product> {
+        return repository.searchProducts(query)
     }
-
 }

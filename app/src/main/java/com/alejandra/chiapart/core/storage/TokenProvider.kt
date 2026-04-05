@@ -1,4 +1,4 @@
-package com.alejandra.amordepelis.core.storage
+package com.alejandra.chiapart.core.storage
 
 import javax.inject.Inject
 import javax.inject.Singleton

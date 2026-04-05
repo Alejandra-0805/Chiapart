@@ -1,7 +1,7 @@
-package com.alejandra.amordepelis.features.home.di
+package com.alejandra.chiapart.features.home.di
 
-import com.alejandra.amordepelis.core.di.AmorDePelisApi
-import com.alejandra.amordepelis.features.home.data.datasources.remote.api.HomeApi
+import com.alejandra.chiapart.core.di.ChiapartApi
+import com.alejandra.chiapart.features.home.data.datasources.remote.api.HomeApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 object HomeNetworkModule {
     @Provides
     @Singleton
-    fun provideHomeApi(@AmorDePelisApi retrofit: Retrofit): HomeApi {
+    fun provideHomeApi(@ChiapartApi retrofit: Retrofit): HomeApi {
         return retrofit.create(HomeApi::class.java)
     }
 }

@@ -1,7 +1,7 @@
-package com.alejandra.amordepelis.features.home.di
+package com.alejandra.chiapart.features.home.di
 
-import com.alejandra.amordepelis.features.home.data.repositories.HomeRepositoryImpl
-import com.alejandra.amordepelis.features.home.domain.repositories.HomeRepository
+import com.alejandra.chiapart.features.home.data.repositories.ProductRepositoryImpl
+import com.alejandra.chiapart.features.home.domain.repositories.ProductRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,6 +12,6 @@ import dagger.hilt.components.SingletonComponent
 abstract class HomeRepositoryModule {
     @Binds
     abstract fun bindHomeRepository(
-        homeRepositoryImpl: HomeRepositoryImpl
-    ): HomeRepository
+        homeRepositoryImpl: ProductRepositoryImpl
+    ): ProductRepository
 }

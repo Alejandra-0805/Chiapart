@@ -1,10 +1,9 @@
-package com.alejandra.amordepelis.features.home.di
+package com.alejandra.chiapart.features.home.di
 
-import com.alejandra.amordepelis.features.home.domain.repositories.HomeRepository
-import com.alejandra.amordepelis.features.home.domain.usecases.GetAnnouncementsUseCase
-import com.alejandra.amordepelis.features.home.domain.usecases.GetMetricsUseCase
-import com.alejandra.amordepelis.features.home.domain.usecases.GetRecentMoviesUseCase
-import com.alejandra.amordepelis.features.home.domain.usecases.HomeUseCases
+import com.alejandra.chiapart.features.home.domain.repositories.ProductRepository
+import com.alejandra.chiapart.features.home.domain.usecases.GetProductsUseCase
+import com.alejandra.chiapart.features.home.domain.usecases.HomeUseCases
+import com.alejandra.chiapart.features.home.domain.usecases.SearchProductsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,33 +16,25 @@ object HomeUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetMetricsUseCase(repository: HomeRepository): GetMetricsUseCase {
-        return GetMetricsUseCase(repository)
+    fun provideGetProductsUseCase(repository: ProductRepository): GetProductsUseCase {
+        return GetProductsUseCase(repository)
     }
 
     @Provides
     @Singleton
-    fun provideGetRecentMoviesUseCase(repository: HomeRepository): GetRecentMoviesUseCase {
-        return GetRecentMoviesUseCase(repository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGetAnnouncementsUseCase(repository: HomeRepository): GetAnnouncementsUseCase {
-        return GetAnnouncementsUseCase(repository)
+    fun provideSearchProductsUseCase(repository: ProductRepository): SearchProductsUseCase {
+        return SearchProductsUseCase(repository)
     }
 
     @Provides
     @Singleton
     fun provideHomeUseCases(
-        getMetricsUseCase: GetMetricsUseCase,
-        getRecentMoviesUseCase: GetRecentMoviesUseCase,
-        getAnnouncementsUseCase: GetAnnouncementsUseCase
+        getProductsUseCase: GetProductsUseCase,
+        searchProductsUseCase: SearchProductsUseCase,
     ): HomeUseCases {
         return HomeUseCases(
-            getMetrics = getMetricsUseCase,
-            getRecentMovies = getRecentMoviesUseCase,
-            getAnnouncements = getAnnouncementsUseCase
+            getProducts = getProductsUseCase,
+            searchProducts = searchProductsUseCase
         )
     }
 }
