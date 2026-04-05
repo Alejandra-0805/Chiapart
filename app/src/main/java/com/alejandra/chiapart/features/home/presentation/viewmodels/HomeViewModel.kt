@@ -3,7 +3,6 @@ package com.alejandra.chiapart.features.home.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandra.chiapart.features.home.domain.usecases.HomeUseCases
-import com.alejandra.chiapart.features.home.presentation.mapper.toUiModelList
 import com.alejandra.chiapart.features.home.presentation.screens.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -61,7 +60,7 @@ class HomeViewModel @Inject constructor(
                 _uiState.update { currentState ->
                     currentState.copy(
                         isLoading = false,
-                        products = products.toUiModelList(),
+                        products = products,
                         error = null
                     )
                 }
@@ -75,5 +74,4 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
 }
