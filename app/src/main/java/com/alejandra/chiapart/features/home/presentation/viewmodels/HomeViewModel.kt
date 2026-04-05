@@ -2,6 +2,7 @@ package com.alejandra.chiapart.features.home.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alejandra.chiapart.features.home.domain.entities.Product
 import com.alejandra.chiapart.features.home.domain.usecases.HomeUseCases
 import com.alejandra.chiapart.features.home.presentation.screens.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +31,42 @@ class HomeViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(searchQuery = query)
         }
-        fetchProducts()
+        applyFilters()
+    }
+
+    fun onCategoryFilterToggle(category: String) {
+        _uiState.update { currentState ->
+            val updatedCategories = if (currentState.selectedCategories.contains(category)) {
+                currentState.selectedCategories - category
+            } else {
+                currentState.selectedCategories + category
+            }
+            currentState.copy(selectedCategories = updatedCategories)
+        }
+        applyFilters()
+    }
+
+    fun onRegionFilterToggle(region: String) {
+        _uiState.update { currentState ->
+            val updatedRegions = if (currentState.selectedRegions.contains(region)) {
+                currentState.selectedRegions - region
+            } else {
+                currentState.selectedRegions + region
+            }
+            currentState.copy(selectedRegions = updatedRegions)
+        }
+        applyFilters()
+    }
+
+    fun clearFilters() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                selectedCategories = emptySet(),
+                selectedRegions = emptySet(),
+                searchQuery = ""
+            )
+        }
+        applyFilters()
     }
 
     fun onRetry() {
@@ -40,27 +76,23 @@ class HomeViewModel @Inject constructor(
     private fun fetchProducts() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            val query = _uiState.value.searchQuery.trim()
-
             _uiState.update { currentState ->
                 currentState.copy(isLoading = true, error = null)
             }
 
-            if (query.isNotBlank()) {
-                delay(250)
-            }
-
             runCatching {
-                if (query.isBlank()) {
-                    homeUseCases.getProducts()
-                } else {
-                    homeUseCases.searchProducts(query)
-                }
+                homeUseCases.getProducts()
             }.onSuccess { products ->
+                val categories = products.map { it.category }.distinct().sorted()
+                val regions = products.map { it.region }.distinct().sorted()
+                
                 _uiState.update { currentState ->
                     currentState.copy(
                         isLoading = false,
+                        allProducts = products,
                         products = products,
+                        availableCategories = categories,
+                        availableRegions = regions,
                         error = null
                     )
                 }
@@ -72,6 +104,32 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun applyFilters() {
+        val currentState = _uiState.value
+        val query = currentState.searchQuery.trim().lowercase()
+        val selectedCategories = currentState.selectedCategories
+        val selectedRegions = currentState.selectedRegions
+
+        val filteredProducts = currentState.allProducts.filter { product ->
+            val matchesSearch = query.isBlank() ||
+                    product.name.lowercase().contains(query) ||
+                    product.category.lowercase().contains(query) ||
+                    product.description.lowercase().contains(query)
+
+            val matchesCategory = selectedCategories.isEmpty() ||
+                    selectedCategories.contains(product.category)
+
+            val matchesRegion = selectedRegions.isEmpty() ||
+                    selectedRegions.contains(product.region)
+
+            matchesSearch && matchesCategory && matchesRegion
+        }
+
+        _uiState.update { state ->
+            state.copy(products = filteredProducts)
         }
     }
 }

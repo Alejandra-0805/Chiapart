@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,30 +47,52 @@ fun ProductDetailsScreen(
     viewModel: ProductDetailsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    ProductDetailsScreen(
+        productId = productId,
+        uiState = uiState,
+        onNavigateBack = onNavigateBack,
+        onLoadProduct = { viewModel.loadProductDetails(productId) },
+        onDeleteProduct = { viewModel.deleteProduct(productId) },
+        onClearState = { viewModel.clearState() },
+        onClearMessages = { viewModel.clearMessages() }
+    )
+}
+
+@Composable
+fun ProductDetailsScreen(
+    productId: Int,
+    uiState: ProductDetailsUiState,
+    onNavigateBack: () -> Unit,
+    onLoadProduct: () -> Unit,
+    onDeleteProduct: () -> Unit,
+    onClearState: () -> Unit,
+    onClearMessages: () -> Unit
+) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(productId) {
-        viewModel.loadProductDetails(productId)
+        onLoadProduct()
     }
 
     LaunchedEffect(uiState.isDeleted) {
         if (uiState.isDeleted) {
             onNavigateBack()
-            viewModel.clearState()
+            onClearState()
         }
     }
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
             snackbarHostState.showSnackbar(it)
-            viewModel.clearMessages()
+            onClearMessages()
         }
     }
 
     LaunchedEffect(uiState.message) {
         uiState.message?.let {
             snackbarHostState.showSnackbar(it)
-            viewModel.clearMessages()
+            onClearMessages()
         }
     }
 
@@ -87,7 +110,7 @@ fun ProductDetailsScreen(
             uiState.error != null && uiState.product == null -> {
                 ErrorState(
                     message = uiState.error ?: "Error desconocido",
-                    onRetry = { viewModel.loadProductDetails(productId) },
+                    onRetry = onLoadProduct,
                     modifier = Modifier.padding(paddingValues)
                 )
             }
@@ -96,7 +119,7 @@ fun ProductDetailsScreen(
                     product = uiState.product!!,
                     isLoading = uiState.isLoading,
                     onEditClick = { /* TODO: Navigate to edit screen */ },
-                    onDeleteClick = { viewModel.deleteProduct(productId) },
+                    onDeleteClick = onDeleteProduct,
                     modifier = Modifier.padding(paddingValues)
                 )
             }
@@ -202,4 +225,28 @@ private fun ErrorState(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProductDetailsScreenPreview() {
+    ProductDetailsScreen(
+        productId = 1,
+        uiState = ProductDetailsUiState(
+            product = Product(
+                id = 1,
+                name = "Ejemplo de Producto",
+                category = "Categoría",
+                region = "Región",
+                description = "Esta es una descripción de ejemplo para el preview.",
+                price = 100.0,
+                imageUrl = ""
+            )
+        ),
+        onNavigateBack = {},
+        onLoadProduct = {},
+        onDeleteProduct = {},
+        onClearState = {},
+        onClearMessages = {}
+    )
 }
