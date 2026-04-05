@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -37,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alejandra.chiapart.features.auth.data.datasources.remote.model.LoginRequest
 import com.alejandra.chiapart.features.auth.presentation.viewmodels.AuthViewModel
 
 @Composable
@@ -49,6 +49,7 @@ fun RegisterScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val email by viewModel.email.collectAsStateWithLifecycle()
     val password by viewModel.password.collectAsStateWithLifecycle()
+    val username by viewModel.username.collectAsStateWithLifecycle()
     
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -79,9 +80,17 @@ fun RegisterScreen(
             uiState = uiState,
             email = email,
             password = password,
+            username = username,
             onEmailChange = viewModel::onEmailChange,
             onPasswordChange = viewModel::onPasswordChange,
-            onRegisterClick = { viewModel.register(LoginRequest(email = email, password = password)) },
+            onUsernameChange = viewModel::onUsernameChange,
+            onRegisterClick = { 
+                viewModel.register(
+                    email = email, 
+                    password = password, 
+                    username = username
+                ) 
+            },
             onNavigateToLogin = onNavigateToLogin,
             modifier = Modifier.padding(paddingValues)
         )
@@ -93,8 +102,10 @@ private fun RegisterScreenContent(
     uiState: AuthUiState,
     email: String,
     password: String,
+    username: String,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onUsernameChange: (String) -> Unit,
     onRegisterClick: () -> Unit,
     onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier
@@ -120,6 +131,25 @@ private fun RegisterScreenContent(
         HeaderSection()
 
         Spacer(modifier = Modifier.height(32.dp))
+
+        OutlinedTextField(
+            value = username,
+            onValueChange = onUsernameChange,
+            label = { Text("Nombre de usuario") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Outlined.Person,
+                    contentDescription = null
+                )
+            },
+            placeholder = { Text("Tu nombre") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            enabled = !uiState.isLoading,
+            shape = RoundedCornerShape(14.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = email,
@@ -175,7 +205,7 @@ private fun RegisterScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-            enabled = email.isNotBlank() && password.isNotBlank() && !uiState.isLoading,
+            enabled = email.isNotBlank() && password.isNotBlank() && username.isNotBlank() && !uiState.isLoading,
             shape = RoundedCornerShape(14.dp)
         ) {
             if (uiState.isLoading) {
@@ -224,8 +254,10 @@ private fun RegisterScreenPreview() {
         uiState = AuthUiState(),
         email = "",
         password = "",
+        username = "",
         onEmailChange = {},
         onPasswordChange = {},
+        onUsernameChange = {},
         onRegisterClick = {},
         onNavigateToLogin = {}
     )

@@ -5,7 +5,7 @@ import com.alejandra.chiapart.features.auth.domain.entities.LoginResponse
 
 fun LoginResponseDto.loginToDomain(): LoginResponse {
     return LoginResponse(
-        message = this.message,
-        token = this.token
+        token = this.token,
+        username = this.username
     )
 }

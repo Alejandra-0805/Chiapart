@@ -38,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alejandra.chiapart.features.auth.data.datasources.remote.model.LoginRequest
 import com.alejandra.chiapart.features.auth.presentation.viewmodels.AuthViewModel
 
 @Composable
@@ -82,7 +81,7 @@ fun LoginScreen(
             password = password,
             onEmailChange = viewModel::onEmailChange,
             onPasswordChange = viewModel::onPasswordChange,
-            onLoginClick = { viewModel.login(LoginRequest(email = email, password = password)) },
+            onLoginClick = { viewModel.login(email = email, password = password) },
             onNavigateToRegister = onNavigateToRegister,
             modifier = Modifier.padding(paddingValues)
         )

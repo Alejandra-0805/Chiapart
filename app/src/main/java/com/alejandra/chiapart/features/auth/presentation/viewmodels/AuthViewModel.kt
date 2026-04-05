@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandra.chiapart.features.auth.data.datasources.remote.model.LoginRequest
+import com.alejandra.chiapart.features.auth.data.datasources.remote.model.RegisterRequest
 import com.alejandra.chiapart.features.auth.domain.usecases.AuthUseCases
 import com.alejandra.chiapart.features.auth.presentation.screens.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,9 @@ class AuthViewModel @Inject constructor(
     private val _password = MutableStateFlow("")
     val password = _password.asStateFlow()
 
+    private val _username = MutableStateFlow("")
+    val username = _username.asStateFlow()
+
     fun onEmailChange(newEmail: String) {
         _email.value = newEmail
     }
@@ -34,7 +38,11 @@ class AuthViewModel @Inject constructor(
         _password.value = newPassword
     }
 
-    fun login(request: LoginRequest) {
+    fun onUsernameChange(newUsername: String) {
+        _username.value = newUsername
+    }
+
+    fun login(email: String, password: String) {
         _uiState.update {
             it.copy(
                 isLoading = true,
@@ -44,6 +52,7 @@ class AuthViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            val request = LoginRequest(email = email, passwordRaw = password)
             val result = authUseCases.login(request)
             Log.d("AuthViewModel", "Login result: $result")
 
@@ -56,7 +65,7 @@ class AuthViewModel @Inject constructor(
                         currentState.copy(
                             isLoading = false,
                             isSuccess = true,
-                            message = response.message
+                            message = "Bienvenido, ${response.username}"
                         )
                     }
                 },
@@ -72,7 +81,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun register(user: LoginRequest) {
+    fun register(email: String, password: String, username: String) {
         _uiState.update {
             it.copy(
                 isLoading = true,
@@ -82,16 +91,18 @@ class AuthViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val result = authUseCases.register(user)
+            val request = RegisterRequest(
+                email = email,
+                passwordRaw = password,
+                username = username
+            )
+            val result = authUseCases.register(request)
             Log.d("AuthViewModel", "Register result: $result")
 
             result.fold(
                 onSuccess = { response ->
                     Log.d("AuthViewModel", "Register successful, auto-login...")
-                    performAutoLogin(
-                        email = user.email,
-                        password = user.password
-                    )
+                    performAutoLogin(email = email, password = password)
                 },
                 onFailure = { error ->
                     _uiState.update { currentState ->
@@ -106,7 +117,8 @@ class AuthViewModel @Inject constructor(
     }
 
     private suspend fun performAutoLogin(email: String, password: String) {
-        val loginResult = authUseCases.login(LoginRequest(email = email, password = password))
+        val loginRequest = LoginRequest(email = email, passwordRaw = password)
+        val loginResult = authUseCases.login(loginRequest)
         Log.d("AuthViewModel", "Auto-login result: $loginResult")
 
         loginResult.fold(
@@ -137,5 +149,6 @@ class AuthViewModel @Inject constructor(
         _uiState.value = AuthUiState()
         _email.value = ""
         _password.value = ""
+        _username.value = ""
     }
 }
