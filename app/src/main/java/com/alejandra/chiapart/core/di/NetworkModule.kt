@@ -1,7 +1,5 @@
 package com.alejandra.chiapart.core.di
 
-import com.alejandra.chiapart.features.home.data.datasources.remote.api.HomeApi
-import com.alejandra.chiapart.features.home.presentation.screens.HomeScreen
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -36,11 +34,5 @@ object NetworkModule {
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAuthApi(retrofit: Retrofit): HomeApi{
-        return retrofit.create(HomeApi::class.java)
     }
 }

@@ -1,6 +1,5 @@
 package com.alejandra.chiapart.features.home.di
 
-import com.alejandra.chiapart.core.di.ChiapartApi
 import com.alejandra.chiapart.features.home.data.datasources.remote.api.HomeApi
 import dagger.Module
 import dagger.Provides
@@ -14,7 +13,7 @@ import javax.inject.Singleton
 object HomeNetworkModule {
     @Provides
     @Singleton
-    fun provideHomeApi(@ChiapartApi retrofit: Retrofit): HomeApi {
+    fun provideHomeApi(retrofit: Retrofit): HomeApi {
         return retrofit.create(HomeApi::class.java)
     }
 }
