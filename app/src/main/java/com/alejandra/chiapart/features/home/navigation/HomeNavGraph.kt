@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import com.alejandra.chiapart.core.navigation.FeatureNavGraph
 import com.alejandra.chiapart.core.navigation.Home
 import com.alejandra.chiapart.core.navigation.ProductDetails
+import com.alejandra.chiapart.core.navigation.AddProduct
 import com.alejandra.chiapart.features.home.presentation.screens.HomeScreen
 import javax.inject.Inject
 
@@ -18,6 +19,9 @@ class HomeNavGraph @Inject constructor() : FeatureNavGraph {
             HomeScreen(
                 onProductClick = { productId ->
                     navController.navigate(ProductDetails(productId))
+                },
+                onAddProductClick = {
+                    navController.navigate(AddProduct)
                 }
             )
         }

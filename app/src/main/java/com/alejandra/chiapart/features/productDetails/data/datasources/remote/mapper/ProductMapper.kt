@@ -11,7 +11,8 @@ fun ProductDto.toDomain(): Product {
         region = this.region,
         description = this.description,
         price = this.price,
-        imageUrl = this.imageUrl
+        imageUrl = this.imageUrl,
+        usuarioId = this.usuarioId
     )
 }
 
@@ -23,6 +24,7 @@ fun Product.toDto(): ProductDto {
         region = this.region,
         description = this.description,
         price = this.price,
-        imageUrl = this.imageUrl
+        imageUrl = this.imageUrl,
+        usuarioId = this.usuarioId
     )
 }

@@ -39,6 +39,10 @@ import com.alejandra.chiapart.features.productDetails.presentation.components.Pr
 import com.alejandra.chiapart.features.productDetails.presentation.components.ProductInfoSection
 import com.alejandra.chiapart.features.productDetails.presentation.components.ProductRegionSection
 import com.alejandra.chiapart.features.productDetails.presentation.viewmodels.ProductDetailsViewModel
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 @Composable
 fun ProductDetailsScreen(
@@ -54,6 +58,8 @@ fun ProductDetailsScreen(
         onNavigateBack = onNavigateBack,
         onLoadProduct = { viewModel.loadProductDetails(productId) },
         onDeleteProduct = { viewModel.deleteProduct(productId) },
+        onEditProduct = { viewModel.editProduct(it) },
+        onSetEditing = { viewModel.setEditing(it) },
         onClearState = { viewModel.clearState() },
         onClearMessages = { viewModel.clearMessages() }
     )
@@ -66,10 +72,13 @@ fun ProductDetailsScreen(
     onNavigateBack: () -> Unit,
     onLoadProduct: () -> Unit,
     onDeleteProduct: () -> Unit,
+    onEditProduct: (Product) -> Unit,
+    onSetEditing: (Boolean) -> Unit,
     onClearState: () -> Unit,
     onClearMessages: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     LaunchedEffect(productId) {
         onLoadProduct()
@@ -116,21 +125,117 @@ fun ProductDetailsScreen(
             }
             uiState.product != null -> {
                 ProductDetailsContent(
-                    product = uiState.product!!,
+                    product = uiState.product,
                     isLoading = uiState.isLoading,
-                    onEditClick = { /* TODO: Navigate to edit screen */ },
-                    onDeleteClick = onDeleteProduct,
+                    isOwner = uiState.isOwner,
+                    onEditClick = { onSetEditing(true) },
+                    onDeleteClick = { showDeleteConfirmation = true },
                     modifier = Modifier.padding(paddingValues)
                 )
+                
+                if (showDeleteConfirmation) {
+                    AlertDialog(
+                        onDismissRequest = { showDeleteConfirmation = false },
+                        title = { Text("Eliminar Producto") },
+                        text = { Text("¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer y solo puedes eliminarlo si tú lo creaste.") },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    showDeleteConfirmation = false
+                                    onDeleteProduct()
+                                }
+                            ) {
+                                Text("Eliminar", color = MaterialTheme.colorScheme.error)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDeleteConfirmation = false }) {
+                                Text("Cancelar")
+                            }
+                        }
+                    )
+                }
+
+                if (uiState.isEditing) {
+                    EditProductDialog(
+                        product = uiState.product,
+                        onDismiss = { onSetEditing(false) },
+                        onConfirm = { editedProduct ->
+                            onEditProduct(editedProduct)
+                            onSetEditing(false)
+                        }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
+private fun EditProductDialog(
+    product: Product,
+    onDismiss: () -> Unit,
+    onConfirm: (Product) -> Unit
+) {
+    var name by remember { mutableStateOf(product.name) }
+    var description by remember { mutableStateOf(product.description) }
+    var price by remember { mutableStateOf(product.price.toString()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Editar Producto") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Descripción") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = price,
+                    onValueChange = { price = it },
+                    label = { Text("Precio") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val newPrice = price.toDoubleOrNull() ?: product.price
+                    val editedProduct = product.copy(
+                        name = name,
+                        description = description,
+                        price = newPrice
+                    )
+                    onConfirm(editedProduct)
+                }
+            ) {
+                Text("Guardar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
+
+@Composable
 private fun ProductDetailsContent(
     product: Product,
     isLoading: Boolean,
+    isOwner: Boolean,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -177,13 +282,14 @@ private fun ProductDetailsContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        ProductActionButtons(
-            onEditClick = onEditClick,
-            onDeleteClick = onDeleteClick,
-            isLoading = isLoading
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
+        if (isOwner) {
+            ProductActionButtons(
+                onEditClick = onEditClick,
+                onDeleteClick = onDeleteClick,
+                isLoading = isLoading
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+        }
     }
 }
 
@@ -246,6 +352,8 @@ fun ProductDetailsScreenPreview() {
         onNavigateBack = {},
         onLoadProduct = {},
         onDeleteProduct = {},
+        onEditProduct = {},
+        onSetEditing = {},
         onClearState = {},
         onClearMessages = {}
     )

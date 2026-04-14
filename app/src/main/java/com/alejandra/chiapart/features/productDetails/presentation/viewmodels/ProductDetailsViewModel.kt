@@ -2,6 +2,7 @@ package com.alejandra.chiapart.features.productDetails.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alejandra.chiapart.core.storage.TokenDataStore
 import com.alejandra.chiapart.features.productDetails.domain.entities.Product
 import com.alejandra.chiapart.features.productDetails.domain.usecases.ProductDetailsUseCases
 import com.alejandra.chiapart.features.productDetails.presentation.screens.ProductDetailsUiState
@@ -9,13 +10,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductDetailsViewModel @Inject constructor(
-    private val productDetailsUseCases: ProductDetailsUseCases
+    private val productDetailsUseCases: ProductDetailsUseCases,
+    private val tokenDataStore: TokenDataStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
@@ -31,6 +34,7 @@ class ProductDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             val result = productDetailsUseCases.getProductDetails(productId)
+            val currentUserId = tokenDataStore.currentUserIdFlow.firstOrNull()
 
             result.fold(
                 onSuccess = { product ->
@@ -38,7 +42,8 @@ class ProductDetailsViewModel @Inject constructor(
                         currentState.copy(
                             isLoading = false,
                             product = product,
-                            isSuccess = true
+                            isSuccess = true,
+                            isOwner = (currentUserId != null && currentUserId == product.usuarioId)
                         )
                     }
                 },
@@ -131,6 +136,12 @@ class ProductDetailsViewModel @Inject constructor(
                 message = null,
                 error = null
             )
+        }
+    }
+
+    fun setEditing(isEditing: Boolean) {
+        _uiState.update {
+            it.copy(isEditing = isEditing)
         }
     }
 }

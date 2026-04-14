@@ -7,6 +7,8 @@ data class ProductDetailsUiState(
     val product: Product? = null,
     val isSuccess: Boolean = false,
     val isDeleted: Boolean = false,
+    val isEditing: Boolean = false,
     val message: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val isOwner: Boolean = false
 )

@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
@@ -34,7 +38,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onProductClick: (Int) -> Unit = {}
+    onProductClick: (Int) -> Unit = {},
+    onAddProductClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -58,6 +63,7 @@ fun HomeScreen(
             onSearchQueryChange = viewModel::onSearchQueryChange,
             onRetry = viewModel::onRetry,
             onProductClick = onProductClick,
+            onAddProductClick = onAddProductClick,
             onMenuClick = {
                 scope.launch {
                     drawerState.open()
@@ -73,12 +79,25 @@ private fun HomeScreenContent(
     onSearchQueryChange: (String) -> Unit,
     onRetry: () -> Unit,
     onProductClick: (Int) -> Unit,
+    onAddProductClick: () -> Unit,
     onMenuClick: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             HomeTopBar(onMenuClick = onMenuClick)
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddProductClick,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Agregar Producto"
+                )
+            }
         }
     ) { innerPadding ->
         Column(
@@ -156,6 +175,7 @@ fun HomeScreenPreview() {
         onSearchQueryChange = {},
         onRetry = {},
         onProductClick = {},
+        onAddProductClick = {},
         onMenuClick = {}
     )
 }

@@ -16,5 +16,7 @@ data class ProductDto(
     @SerializedName("precio")
     val price: Double,
     @SerializedName("imagenUrl")
-    val imageUrl: String
+    val imageUrl: String,
+    @SerializedName("usuarioId")
+    val usuarioId: Int = -1
 )

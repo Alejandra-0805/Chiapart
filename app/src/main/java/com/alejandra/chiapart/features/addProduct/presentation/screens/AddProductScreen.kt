@@ -78,6 +78,9 @@ fun AddProductScreen(
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
+            uiState.successMessage?.let {
+                snackbarHostState.showSnackbar(it)
+            }
             onProductCreated()
         }
     }
