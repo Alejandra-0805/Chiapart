@@ -1,7 +1,7 @@
 package com.alejandra.chiapart.features.addProduct.di
 
-import com.alejandra.chiapart.features.productDetails.data.repositories.ProductRepositoryImpl
-import com.alejandra.chiapart.features.productDetails.domain.repositories.ProductRepository
+import com.alejandra.chiapart.features.addProduct.data.repositories.AddProductRepositoryImpl
+import com.alejandra.chiapart.features.addProduct.domain.repositories.AddProductRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -9,9 +9,9 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ProductDetailsRepositoryModule {
+abstract class AddProductRepositoryModule {
     @Binds
-    abstract fun bindProductRepository(
-        productRepositoryImpl: ProductRepositoryImpl
-    ): ProductRepository
+    abstract fun bindAddProductRepository(
+        addProductRepositoryImpl: AddProductRepositoryImpl
+    ): AddProductRepository
 }

@@ -1,28 +1,34 @@
 package com.alejandra.chiapart.features.addProduct.data.datasources.remote.mapper
 
-import com.alejandra.chiapart.features.productDetails.data.datasources.remote.model.ProductDto
-import com.alejandra.chiapart.features.productDetails.domain.entities.Product
+import com.alejandra.chiapart.features.addProduct.data.datasources.remote.model.CategoryDto
+import com.alejandra.chiapart.features.addProduct.data.datasources.remote.model.CreateProductResponseDto
+import com.alejandra.chiapart.features.addProduct.data.datasources.remote.model.RegionDto
+import com.alejandra.chiapart.features.addProduct.domain.entities.Category
+import com.alejandra.chiapart.features.addProduct.domain.entities.CreateProductResponse
+import com.alejandra.chiapart.features.addProduct.domain.entities.Region
 
-fun ProductDto.toDomain(): Product {
-    return Product(
+fun CategoryDto.toDomain(): Category {
+    return Category(
         id = this.id,
-        name = this.name,
-        category = this.category,
-        region = this.region,
-        description = this.description,
-        price = this.price,
-        imageUrl = this.imageUrl
+        name = this.nombre
     )
 }
 
-fun Product.toDto(): ProductDto {
-    return ProductDto(
+fun List<CategoryDto>.toDomainCategories(): List<Category> = map { it.toDomain() }
+
+fun RegionDto.toDomain(): Region {
+    return Region(
         id = this.id,
-        name = this.name,
-        category = this.category,
-        region = this.region,
-        description = this.description,
-        price = this.price,
-        imageUrl = this.imageUrl
+        name = this.nombre
+    )
+}
+
+fun List<RegionDto>.toDomainRegions(): List<Region> = map { it.toDomain() }
+
+fun CreateProductResponseDto.toDomain(): CreateProductResponse {
+    return CreateProductResponse(
+        success = this.exito ?: false,
+        message = this.mensaje ?: "",
+        productId = this.id
     )
 }

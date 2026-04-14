@@ -2,19 +2,25 @@ package com.alejandra.chiapart.features.addProduct.data.datasources.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ProductDto(
+data class CategoryDto(
     @SerializedName("id")
     val id: Int,
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("category")
-    val category: String,
-    @SerializedName("region")
-    val region: String,
-    @SerializedName("description")
-    val description: String,
-    @SerializedName("price")
-    val price: Double,
-    @SerializedName("imageUrl")
-    val imageUrl: String
+    @SerializedName("nombre")
+    val nombre: String
+)
+
+data class RegionDto(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("nombre")
+    val nombre: String
+)
+
+data class CreateProductResponseDto(
+    @SerializedName("id")
+    val id: Int?,
+    @SerializedName("mensaje")
+    val mensaje: String?,
+    @SerializedName("exito")
+    val exito: Boolean?
 )

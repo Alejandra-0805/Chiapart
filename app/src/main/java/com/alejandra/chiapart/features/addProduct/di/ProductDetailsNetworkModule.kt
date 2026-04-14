@@ -1,6 +1,6 @@
 package com.alejandra.chiapart.features.addProduct.di
 
-import com.alejandra.chiapart.features.productDetails.data.datasources.remote.api.ProductDetailsApi
+import com.alejandra.chiapart.features.addProduct.data.datasources.remote.api.AddProductApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,10 +10,10 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ProductDetailsNetworkModule {
+object AddProductNetworkModule {
     @Provides
     @Singleton
-    fun provideProductDetailsApi(retrofit: Retrofit): ProductDetailsApi {
-        return retrofit.create(ProductDetailsApi::class.java)
+    fun provideAddProductApi(retrofit: Retrofit): AddProductApi {
+        return retrofit.create(AddProductApi::class.java)
     }
 }

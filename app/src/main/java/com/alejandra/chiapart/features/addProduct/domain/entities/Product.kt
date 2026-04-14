@@ -15,8 +15,7 @@ data class CreateProductRequest(
     val price: Double,
     val description: String,
     val categoryId: Int,
-    val regionId: Int,
-    val imageUri: String? = null
+    val regionId: Int
 )
 
 data class CreateProductResponse(

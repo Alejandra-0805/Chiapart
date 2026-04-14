@@ -100,7 +100,7 @@ private fun HomeScreenContent(
             HomeSearchBar(
                 query = uiState.searchQuery,
                 onQueryChange = onSearchQueryChange,
-                placeholder = "Buscar por nombre, categoria o descripcion"
+                placeholder = "Buscar"
             )
 
             Spacer(modifier = Modifier.height(16.dp))
