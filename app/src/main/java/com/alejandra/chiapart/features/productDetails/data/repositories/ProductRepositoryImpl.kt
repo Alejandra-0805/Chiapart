@@ -24,8 +24,8 @@ class ProductRepositoryImpl @Inject constructor(
         val nombreBody = product.name.toRequestBody("text/plain".toMediaTypeOrNull())
         val precioBody = product.price.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val descripcionBody = product.description.toRequestBody("text/plain".toMediaTypeOrNull())
-        val categoriaBody = product.category.toRequestBody("text/plain".toMediaTypeOrNull())
-        val regionBody = product.region.toRequestBody("text/plain".toMediaTypeOrNull())
+        val categoriaBody = product.categoryId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val regionBody = product.regionId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
         // Check if imageUrl is a local file path
         var imagenPart: MultipartBody.Part? = null
@@ -37,7 +37,7 @@ class ProductRepositoryImpl @Inject constructor(
             }
         }
 
-        val result = api.updateProduct(
+        val response = api.updateProduct(
             productId = product.id,
             nombre = nombreBody,
             precio = precioBody,
@@ -45,10 +45,14 @@ class ProductRepositoryImpl @Inject constructor(
             categoriaId = categoriaBody,
             regionId = regionBody,
             imagen = imagenPart
-        ).toDomain()
+        )
 
-        Log.d("ProductRepositoryImpl", "Updated product: $result")
-        return result;
+        if (response.isSuccessful) {
+            Log.d("ProductRepositoryImpl", "Updated product: $product")
+            return product
+        } else {
+            throw Exception("Failed to update product: ${response.errorBody()?.string()}")
+        }
     }
 
     override suspend fun deleteProduct(productId: Int): Boolean {

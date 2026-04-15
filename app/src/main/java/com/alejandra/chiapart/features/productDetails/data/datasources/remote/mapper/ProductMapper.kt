@@ -7,7 +7,9 @@ fun ProductDto.toDomain(): Product {
     return Product(
         id = this.id,
         name = this.name,
+        categoryId = this.categoryId,
         category = this.category,
+        regionId = this.regionId,
         region = this.region,
         description = this.description,
         price = this.price,
@@ -20,7 +22,9 @@ fun Product.toDto(): ProductDto {
     return ProductDto(
         id = this.id,
         name = this.name,
+        categoryId = this.categoryId,
         category = this.category,
+        regionId = this.regionId,
         region = this.region,
         description = this.description,
         price = this.price,

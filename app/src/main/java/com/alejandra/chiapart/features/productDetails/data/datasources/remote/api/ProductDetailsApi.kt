@@ -26,7 +26,7 @@ interface ProductDetailsApi {
         @Part("categoriaId") categoriaId: RequestBody,
         @Part("regionId") regionId: RequestBody,
         @Part imagen: MultipartBody.Part?
-    ): ProductDto
+    ): Response<Unit>
 
     @DELETE("products/{productId}")
     suspend fun deleteProduct(@Path("productId") productId: Int): Response<Unit>

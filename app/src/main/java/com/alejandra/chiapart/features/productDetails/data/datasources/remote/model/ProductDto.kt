@@ -7,8 +7,12 @@ data class ProductDto(
     val id: Int,
     @SerializedName("nombre")
     val name: String,
+    @SerializedName("categoriaId")
+    val categoryId: Int,
     @SerializedName("categoriaNombre")
     val category: String,
+    @SerializedName("regionId")
+    val regionId: Int,
     @SerializedName("regionNombre")
     val region: String,
     @SerializedName("descripcion")

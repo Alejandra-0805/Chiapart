@@ -342,7 +342,9 @@ fun ProductDetailsScreenPreview() {
             product = Product(
                 id = 1,
                 name = "Ejemplo de Producto",
+                categoryId = 1,
                 category = "Categoría",
+                regionId = 1,
                 region = "Región",
                 description = "Esta es una descripción de ejemplo para el preview.",
                 price = 100.0,
