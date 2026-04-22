@@ -73,6 +73,11 @@ class HomeViewModel @Inject constructor(
         fetchProducts()
     }
 
+    /** Recarga la lista de productos. Se llama cuando el usuario regresa a Home. */
+    fun refresh() {
+        fetchProducts()
+    }
+
     private fun fetchProducts() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
