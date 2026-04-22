@@ -9,4 +9,11 @@ interface AuthRepository {
     suspend fun register(request: RegisterRequest): RegisterResponse
 
     suspend fun login(request: LoginRequest): LoginResponse
+
+    /**
+     * Verifica si el token actualmente guardado es válido.
+     * @return true si la API responde 2xx, false si responde 401.
+     * @throws Exception si hay un error de red u otro error inesperado.
+     */
+    suspend fun verifyToken(): Boolean
 }

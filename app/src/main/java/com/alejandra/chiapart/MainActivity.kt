@@ -5,8 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.alejandra.chiapart.core.navigation.FeatureNavGraph
-import com.alejandra.chiapart.core.navigation.Login
 import com.alejandra.chiapart.core.navigation.NavigationWrapper
+import com.alejandra.chiapart.core.navigation.Splash
 import com.alejandra.chiapart.ui.theme.ChiapartTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
             ChiapartTheme {
                 NavigationWrapper(
                     navGraphs = navGraphs,
-                    startDestination = Login
+                    startDestination = Splash
                 )
             }
         }

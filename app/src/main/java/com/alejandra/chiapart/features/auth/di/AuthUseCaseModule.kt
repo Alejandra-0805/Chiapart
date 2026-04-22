@@ -6,6 +6,7 @@ import com.alejandra.chiapart.features.auth.domain.usecases.AuthUseCases
 import com.alejandra.chiapart.features.auth.domain.usecases.LoginUseCase
 import com.alejandra.chiapart.features.auth.domain.usecases.RegisterUseCase
 import com.alejandra.chiapart.features.auth.domain.usecases.SaveTokenUseCase
+import com.alejandra.chiapart.features.auth.domain.usecases.VerifyTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +33,15 @@ object AuthUseCaseModule {
     @Singleton
     fun provideSaveTokenUseCase(tokenDataStore: TokenDataStore): SaveTokenUseCase {
         return SaveTokenUseCase(tokenDataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVerifyTokenUseCase(
+        tokenDataStore: TokenDataStore,
+        authRepository: AuthRepository
+    ): VerifyTokenUseCase {
+        return VerifyTokenUseCase(tokenDataStore, authRepository)
     }
 
     @Provides

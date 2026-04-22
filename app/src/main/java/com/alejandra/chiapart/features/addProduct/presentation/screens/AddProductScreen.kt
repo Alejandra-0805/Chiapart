@@ -1,5 +1,6 @@
 package com.alejandra.chiapart.features.addProduct.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,14 +11,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +32,7 @@ import com.alejandra.chiapart.features.addProduct.presentation.components.Produc
 import com.alejandra.chiapart.features.addProduct.presentation.components.ProductTextField
 import com.alejandra.chiapart.features.addProduct.presentation.components.RegionDropdown
 import com.alejandra.chiapart.features.addProduct.presentation.components.SubmitButton
+import com.alejandra.chiapart.features.addProduct.presentation.viewmodels.AddProductEvent
 import com.alejandra.chiapart.features.addProduct.presentation.viewmodels.AddProductViewModel
 
 @Composable
@@ -42,11 +42,23 @@ fun AddProductScreen(
     viewModel: AddProductViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // Evento único de un solo disparo: muestra Toast y navega
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is AddProductEvent.ShowToastAndNavigate -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                    onProductCreated()
+                }
+            }
+        }
+    }
 
     AddProductScreen(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
-        onProductCreated = onProductCreated,
         onNameChange = viewModel::onNameChange,
         onPriceChange = viewModel::onPriceChange,
         onDescriptionChange = viewModel::onDescriptionChange,
@@ -54,16 +66,14 @@ fun AddProductScreen(
         onRegionSelected = viewModel::onRegionSelected,
         onImageSelected = viewModel::onImageSelected,
         onSubmit = viewModel::onSubmit,
-        onClearMessages = viewModel::clearMessages,
         onRetry = viewModel::retry
     )
 }
 
 @Composable
-fun AddProductScreen(
+private fun AddProductScreen(
     uiState: AddProductUiState,
     onNavigateBack: () -> Unit,
-    onProductCreated: () -> Unit,
     onNameChange: (String) -> Unit,
     onPriceChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
@@ -71,40 +81,13 @@ fun AddProductScreen(
     onRegionSelected: (Region) -> Unit,
     onImageSelected: (String?, ByteArray?) -> Unit,
     onSubmit: () -> Unit,
-    onClearMessages: () -> Unit,
     onRetry: () -> Unit
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(uiState.isSuccess) {
-        if (uiState.isSuccess) {
-            uiState.successMessage?.let {
-                snackbarHostState.showSnackbar(it)
-            }
-            onProductCreated()
-        }
-    }
-
-    LaunchedEffect(uiState.error) {
-        uiState.error?.let {
-            snackbarHostState.showSnackbar(it)
-            onClearMessages()
-        }
-    }
-
-    LaunchedEffect(uiState.successMessage) {
-        uiState.successMessage?.let {
-            snackbarHostState.showSnackbar(it)
-            onClearMessages()
-        }
-    }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             AddProductTopBar(onNavigateBack = onNavigateBack)
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { paddingValues ->
         when {
             uiState.isLoading && uiState.categories.isEmpty() -> {
@@ -244,7 +227,6 @@ fun AddProductScreenPreview() {
             )
         ),
         onNavigateBack = {},
-        onProductCreated = {},
         onNameChange = {},
         onPriceChange = {},
         onDescriptionChange = {},
@@ -252,7 +234,6 @@ fun AddProductScreenPreview() {
         onRegionSelected = {},
         onImageSelected = { _, _ -> },
         onSubmit = {},
-        onClearMessages = {},
         onRetry = {}
     )
 }

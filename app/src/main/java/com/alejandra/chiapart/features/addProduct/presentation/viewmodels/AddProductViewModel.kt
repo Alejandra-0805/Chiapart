@@ -1,5 +1,6 @@
 package com.alejandra.chiapart.features.addProduct.presentation.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alejandra.chiapart.features.addProduct.domain.entities.Category
@@ -8,12 +9,19 @@ import com.alejandra.chiapart.features.addProduct.domain.entities.Region
 import com.alejandra.chiapart.features.addProduct.domain.usecases.AddProductUseCases
 import com.alejandra.chiapart.features.addProduct.presentation.screens.AddProductUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+/** Eventos de un solo disparo que la pantalla debe consumir exactamente una vez. */
+sealed class AddProductEvent {
+    data class ShowToastAndNavigate(val message: String) : AddProductEvent()
+}
 
 @HiltViewModel
 class AddProductViewModel @Inject constructor(
@@ -22,6 +30,9 @@ class AddProductViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(AddProductUiState())
     val uiState: StateFlow<AddProductUiState> = _uiState.asStateFlow()
+
+    private val _events = Channel<AddProductEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     init {
         loadInitialData()
@@ -113,28 +124,27 @@ class AddProductViewModel @Inject constructor(
             regionId = state.selectedRegion!!.id
         )
 
+        Log.d("AddProductViewModel", "Submitting product: $request")
         _uiState.update { it.copy(isSubmitting = true, error = null) }
 
         viewModelScope.launch {
             val result = addProductUseCases.createProduct(request, state.imageBytes)
 
+            Log.d("AddProductViewModel", "Product creation result: $result")
             result.fold(
                 onSuccess = { response ->
-                    _uiState.update {
-                        it.copy(
-                            isSubmitting = false,
-                            isSuccess = response.success,
-                            successMessage = if (response.success) "Producto creado exitosamente" else response.message
-                        )
+                    _uiState.update { it.copy(isSubmitting = false) }
+                    val message = if (response.success) {
+                        "Producto creado con éxito"
+                    } else {
+                        response.message ?: "Algo salió mal"
                     }
+                    _events.send(AddProductEvent.ShowToastAndNavigate(message))
                 },
                 onFailure = { error ->
-                    _uiState.update {
-                        it.copy(
-                            isSubmitting = false,
-                            error = error.message ?: "Error al crear el producto"
-                        )
-                    }
+                    _uiState.update { it.copy(isSubmitting = false) }
+                    val message = error.message ?: "Algo salió mal"
+                    _events.send(AddProductEvent.ShowToastAndNavigate(message))
                 }
             )
         }

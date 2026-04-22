@@ -22,4 +22,13 @@ class AuthRepositoryImpl @Inject constructor(
         val response = api.login(request)
         return response.loginToDomain()
     }
+
+    override suspend fun verifyToken(): Boolean {
+        val response = api.verifyToken()
+        return when {
+            response.isSuccessful -> true
+            response.code() == 401 -> false
+            else -> throw Exception("Error al verificar token: código ${response.code()}")
+        }
+    }
 }
